@@ -1,0 +1,96 @@
+# See schema in factory_schema_config_base.py for descriptions of parameters.
+
+defaults:
+    - _self_
+
+mode:
+    export_scene: False
+    export_states: False
+
+sim:
+    dt: 0.016667 
+    substeps: 2
+    up_axis: "z"
+    use_gpu_pipeline: True
+    gravity: [0.0, 0.0, -9.81]
+    add_damping: True
+    disable_franka_collisions: False
+
+    physx:
+        solver_type: ${....solver_type}
+        num_threads: ${....num_threads}
+        num_subscenes: ${....num_subscenes}
+        use_gpu: ${contains:"cuda",${....sim_device}}
+
+        num_position_iterations: 8     # 16 -> 8 for speed up
+        num_velocity_iterations: 0
+        contact_offset: 0.01
+        rest_offset: 0.0
+        bounce_threshold_velocity: 0.2
+        max_depenetration_velocity: 5.0
+        friction_offset_threshold: 0.01
+        friction_correlation_distance: 0.00625
+
+        max_gpu_contact_pairs: 8388608  # 8 * 1024 * 1024
+        default_buffer_size_multiplier: 2.0
+        contact_collection: 1 # 0: CC_NEVER (don't collect contact info), 1: CC_LAST_SUBSTEP (collect only contacts on last substep), 2: CC_ALL_SUBSTEPS (broken - do not use!)
+    
+env:
+    env_spacing: 1.0
+    franka_depth: 0.50   # Franka origin 50 cm behind table midpoint - keep consistent with parameters before refactoring
+    table_height: 1.04
+    franka_friction: 1.0
+    table_friction: 1.0
+
+randomize:
+    franka_arm_initial_dof_pos: [-1.7574766278484677, 0.8403247702305783, 2.015877580177467, -2.0924931236718334, -0.7379389376686856, 1.6256438760537268, 1.2689337870766628]
+    fingertip_centered_pos_initial: [0.0, 0.0, 0.2]  # initial position of midpoint between fingertips above table
+    fingertip_centered_pos_noise: [0.0, 0.0, 0.0]  # noise on fingertip pos
+    fingertip_centered_rot_initial: [3.141593, 0.0, 0.0]  # initial rotation of fingertips (Euler)
+    fingertip_centered_rot_noise: [0.0, 0.0, 0.0]  # noise on fingertip rotation
+
+ctrl:
+    ctrl_type: task_space_impedance  # {gym_default,
+                                     #  joint_space_ik, joint_space_id, 
+                                     #  task_space_impedance, operational_space_motion, 
+                                     #  open_loop_force, closed_loop_force,
+                                     #  hybrid_force_motion}
+    all:
+        jacobian_type: geometric
+        gripper_prop_gains: [500, 500]
+        gripper_deriv_gains: [2, 2]
+        # gripper_prop_gains: [100, 100]      # close to speed of real gripper
+        # gripper_deriv_gains: [2, 2]
+    gym_default:
+        ik_method: dls
+        joint_prop_gains: [40, 40, 40, 40, 40, 40, 40]
+        joint_deriv_gains: [8, 8, 8, 8, 8, 8, 8]
+        gripper_prop_gains: [500, 500]
+        gripper_deriv_gains: [20, 20]
+    joint_space_ik:
+        ik_method: dls
+        joint_prop_gains: [1, 1, 1, 1, 1, 1, 1]
+        joint_deriv_gains: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    joint_space_id:
+        ik_method: dls
+        joint_prop_gains: [40, 40, 40, 40, 40, 40, 40]
+        joint_deriv_gains: [8, 8, 8, 8, 8, 8, 8]
+    task_space_impedance:
+        motion_ctrl_axes: [1, 1, 1, 1, 1, 1]
+        task_prop_gains: [1000, 1000, 1000, 50, 50, 50]
+        task_deriv_gains: [63.2, 63.2, 63.2, 1.41, 1.41, 1.41]
+    operational_space_motion:
+        motion_ctrl_axes: [1, 1, 1, 1, 1, 1]
+        task_prop_gains: [150, 150, 150, 150, 150, 150]
+        task_deriv_gains: [25, 25, 25, 25, 25, 25]
+    open_loop_force:
+        force_ctrl_axes: [0, 0, 1, 0, 0, 0]
+    closed_loop_force:
+        force_ctrl_axes: [0, 0, 1, 0, 0, 0]
+        wrench_prop_gains: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    hybrid_force_motion:
+        motion_ctrl_axes: [1, 1, 0, 1, 1, 1]
+        task_prop_gains: [40, 40, 40, 40, 40, 40]
+        task_deriv_gains: [8, 8, 8, 8, 8, 8]
+        force_ctrl_axes: [0, 0, 1, 0, 0, 0]
+        wrench_prop_gains: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]

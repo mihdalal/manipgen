@@ -1,0 +1,52 @@
+{
+    "train": {
+        "num_data_workers": 0,
+        "hdf5_cache_mode": null,
+        "hdf5_use_swmr": true,
+        "hdf5_load_next_obs": false,
+        "hdf5_normalize_obs": false,
+        "hdf5_filter_key": null,
+        "hdf5_validation_filter_key": null,
+        "dataset_keys": [
+            "actions"
+        ],
+        "goal_mode": null
+    },
+    "observation": {
+        "modalities": {
+            "obs": {
+                "low_dim": [
+                    "state"
+                ],
+                "pcd": [
+                    "visual"
+                ]
+            }
+        },
+        "encoder": {
+            "low_dim": {
+                "core_class": null,
+                "core_kwargs": {},
+                "obs_randomizer_class": null,
+                "obs_randomizer_kwargs": {}
+            },
+            "rgb": {
+                "core_class": "VisualCore",
+                "core_kwargs": {},
+                "obs_randomizer_class": null,
+                "obs_randomizer_kwargs": {}
+            },
+            "pcd": {
+                "core_class": "PCDCore",
+                "core_kwargs": {
+                    "backbone_kwargs": {
+                        "encoder_size": "transic",
+                        "n_features": 1
+                    }
+                },
+                "obs_randomizer_class": null,
+                "obs_randomizer_kwargs": {}
+            }
+        }
+    }
+}

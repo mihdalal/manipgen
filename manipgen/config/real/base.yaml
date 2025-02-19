@@ -1,0 +1,193 @@
+sensors: 
+  cam1: # wrist cam
+    _target_: skills_planning.real_world.utils.real_sense_camera.RealSenseCam
+    camera_cfg:
+      img_width: 640
+      img_height: 480
+      hz: 60
+      name: "cam1"
+      device_id: "218622273057"
+      buffer_size: 1
+      window_dur: null  # number of seconds to track in buffer
+      hole_fill: True
+      warm_start:
+        enabled: True
+        frames: 60
+    enabled: True
+    intrinsics: [[383.16439819,   0.        , 326.7461853 ], [  0.        , 383.16439819, 241.39398193],[  0.        ,   0.        ,   1.        ]]
+
+  cam2:
+    _target_: skills_planning.real_world.utils.real_sense_camera.RealSenseCam
+    camera_cfg:
+      img_width: 640
+      img_height: 480
+      hz: 60
+      name: "cam2"
+      device_id: "220422302456"
+      buffer_size: 1
+      window_dur: null  # number of seconds to track in buffer
+      hole_fill: False
+      warm_start:
+        enabled: True
+        frames: 60
+      intrinsics: [[394.63000488,   0.        , 322.71633911],[  0.        , 394.63000488, 239.58982849],[  0.        ,   0.        ,   1.        ]]
+      mv_shift: [0.0, 0.0, 0.0]
+      workspace_min: [0.12, -0.7, -0.3]
+      workspace_max: [1.0, 0.7, 1.0]
+    enabled: True
+
+  cam3:
+    _target_: skills_planning.real_world.utils.real_sense_camera.RealSenseCam
+    camera_cfg:
+      img_width: 640
+      img_height: 480
+      hz: 60
+      name: "cam3"
+      device_id: "231622302999"
+      buffer_size: 1
+      window_dur: null  # number of seconds to track in buffer
+      hole_fill: False
+      warm_start:
+        enabled: True
+        frames: 60
+      intrinsics: [[390.36517334,   0.        , 322.71798706],[  0.        , 390.36517334, 243.21356201], [  0.        ,   0.        ,   1.        ]]
+      mv_shift: [0.0, 0.0, 0.0]
+      workspace_min: [0.12, -0.7, -0.3]
+      workspace_max: [1.0, 0.7, 1.0]
+    enabled: True
+    
+  cam4:
+    _target_: skills_planning.real_world.utils.real_sense_camera.RealSenseCam
+    camera_cfg:
+      img_width: 640
+      img_height: 480
+      hz: 60
+      name: "cam4"
+      device_id: "231622302006"
+      buffer_size: 1
+      window_dur: null  # number of seconds to track in buffer
+      hole_fill: False
+      warm_start:
+        enabled: True
+        frames: 60
+      intrinsics: [[390.51275635,   0.        , 325.16949463],[  0.        , 390.51275635, 238.4041748 ], [  0.        ,   0.        ,   1.        ]]
+      mv_shift: [0.0, 0.0, 0.0]
+      workspace_min: [0.12, -0.7, -0.3]
+      workspace_max: [1.0, 0.7, 1.0]
+    enabled: True
+    
+  cam5:
+    _target_: skills_planning.real_world.utils.real_sense_camera.RealSenseCam
+    camera_cfg:
+      img_width: 640
+      img_height: 480
+      hz: 60
+      name: "cam5"
+      device_id: "220422302129"
+      buffer_size: 1
+      window_dur: null  # number of seconds to track in buffer
+      hole_fill: False
+      warm_start:
+        enabled: True
+        frames: 60
+      intrinsics: [[387.59545898,   0.        , 323.97320557], [  0.        , 387.59545898, 242.43563843], [  0.        ,   0.        ,   1.        ]]
+      mv_shift: [0.0, 0.0, 0.0]
+      workspace_min: [0.12, -0.7, -0.3]
+      workspace_max: [1.0, 0.7, 1.0]
+    enabled: True
+
+policy_config:
+  exp_name: dagger
+  seed: 42
+  rl_device: "cuda"
+  dagger:
+    visual_obs_type: depth
+    student_cfg_path: config/dagger/robomimic/bc_mlp.json
+    batch_size: 2048
+    lr: 1e-4
+    use_seg_obs: False
+  task:
+    env:
+      local_obs:
+        width: 84
+        height: 84
+
+perception_config:
+  depth_clamp_val: 0.3        # depth value to clamp at
+  # raw depth image properties
+  raw_depth_w: 640
+  raw_depth_h: 480
+  # depth before center crop (observation for the policy)
+  obs_depth_w: 368
+  obs_depth_w_down: 84        # reduce resolution of depth image to this width
+  # depth after center crop (actual input to the network, for visualization)
+  vis_depth_w: 332
+  vis_depth_w_down: 76        # reduce resolution of depth image to this width
+  # transform depth image with the following parameters
+  # TODO: you can adjust the values below to match real and simulation depth views
+  process_depth_rotation: 1.5
+  process_depth_h_offset: -5
+  process_depth_w_offset: 20
+
+  delta_proprio_scale: 60.0
+  offset_eef_pos_by_frame0: True
+
+workspace_config:
+  enable_workspace_bounds: False
+  gripper_width: 0.08
+  workspace_z_min: 0.01
+  workspace_z_max: 1.50
+
+task_instance_config:
+  task:
+    class: IndustRealTaskReach
+
+  goals:
+    source: random  # options: random, perception, guide
+    random:
+      num_goals: 10
+      bounds: [[0.4, 0.65], [-0.225, 0.225], [0.10, 0.30],  # (x, y, z)
+              [3.14159, 3.14159], [0.0, 0.0], [0.0, 0.0]]  # Euler angles (XYZ, intrinsic)
+    perception:
+      config: null
+      selectors: null
+      goal_heights: null
+      goal_lateral_offsets: null
+    guide:
+      xy_perturbation: null
+      z_perturbation: null
+      yaw_perturbation: null
+
+  motion:
+    source: rl  # options: rl, frankapy, libfranka, frankapy_and_libfranka
+    duration: 20.0
+    do_before: null  # options: open_gripper, close_gripper, go_upward, go_downward, go_home
+    do_after: ['go_home']
+
+  rl:
+    checkpoint_name: industreal_policy_reach
+    policy_eval_freq: 60.0
+    pos_err_thresh: 0.0001  # position threshold below which to terminate early
+    ori_err_rad_thresh: 0.00873  # orientation threshold below which to terminate early
+    observation_noise_pos: null
+    override_obs_goal_roll_angle: null
+
+  control:
+    prop_gains: [1000, 1000, 1000, 50, 50, 50]
+    # NOTE: deriv_gains computed automatically as 2 * sqrt(prop_gains)
+    mode:
+      type: leaky_plai  # options: nominal, plai, leaky_plai
+      nominal:
+        action_scale: [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+      plai:
+        action_scale: [0.001, 0.001, 0.001, 0.004, 0.004, 0.004]
+      leaky_plai:
+        action_scale: [0.001, 0.001, 0.001, 0.004, 0.004, 0.004]
+        pos_err_thresh: [0.01, 0.01, 0.01]
+        rot_err_thresh: 180.0     # degrees
+
+hz: 60 
+
+neural_mp_config:
+  speed: 0.4
+  in_hand_params: [0, .125, .08, .15, 0, 0, .15, 0, 0, 0, 1]

@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<robot name="door">
+  <link name="skeleton">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry> 
+        <box size="0.005 0.5 0.5"/> 
+      </geometry>
+    </collision>
+  </link>
+  <link name="door_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry> 
+        <box size="0.005 0.5 0.5"/> 
+      </geometry>
+      <material name="">
+        <color rgba="7.50E-01 7.50E-01 7.50E-01 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry> 
+        <box size="0.005 0.5 0.5"/> 
+      </geometry>
+    </collision>
+  </link>
+  <link name="handle_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry> 
+        <mesh filename="decomposed.obj" scale="1.0000E+00 1.0000E+00 1.0000E+00"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.6 0.1 0.0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry> 
+        <mesh filename="decomposed.obj" scale="1.0000E+00 1.0000E+00 1.0000E+00"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="door_joint" type="prismatic">
+    <parent link="skeleton"/>
+    <child link="door_link"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="1000.0" lower="0" upper="0.3" velocity="0.1"/>
+    <dynamics damping="0.05" friction="0.025"/>
+  </joint>
+  <joint name="handle_joint" type="fixed">
+    <parent link="door_link"/>
+    <child link="handle_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+</robot>

@@ -1,0 +1,5 @@
+Changes to industreal_franka.urdf:
+1. replace industreal finger with finray finger
+2. offset fingertip and fingertip centered position by 0.0959 along z-axis
+3. offset panda hand position by 0.004 along z-axis
+4. add camera mount visual mesh to urdf

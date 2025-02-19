@@ -1,0 +1,39 @@
+[submodule "IsaacGymEnvs"]
+	path = IsaacGymEnvs
+	url = https://github.com/mihdalal/IsaacGymEnvs
+	branch = skills_planning
+[submodule "rl_games"]
+	path = rl_games
+	url = https://github.com/mihdalal/rl_games
+	branch = skills_planning
+[submodule "vkdevicechooser"]
+	path = vkdevicechooser
+	url = https://github.com/aejsmith/vkdevicechooser.git
+[submodule "Grounded-Segment-Anything"]
+	path = Grounded-Segment-Anything
+	url = https://github.com/IDEA-Research/Grounded-Segment-Anything.git
+[submodule "industreallib"]
+	path = industreallib
+	url = git@github.com:mihdalal/industreallib.git
+[submodule "pointnet2_ops"]
+	path = pointnet2_ops
+	url = git@github.com:upriyam-cmu/pointnet2_ops.git
+[submodule "robofin"]
+	path = robofin
+	url = https://github.com/mihdalal/robofin.git
+	branch = manipgen
+[submodule "robomimic"]
+	path = robomimic
+	url = https://github.com/mihdalal/robomimic
+	branch = neural_mp_manipgen
+[submodule "tracikpy"]
+	path = tracikpy
+	url = git@github.com:mjd3/tracikpy.git
+[submodule "manipgen_robomimic"]
+	path = manipgen_robomimic
+	url = https://github.com/mihdalal/robomimic
+	branch = manipgen_robomimic
+[submodule "frankapy"]
+	path = frankapy
+	url = https://github.com/mihdalal/frankapy.git
+	branch = manipgen

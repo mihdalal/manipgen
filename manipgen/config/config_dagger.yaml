@@ -1,0 +1,209 @@
+# choose the task to be executed
+task_name: ${task.name}
+
+# name of the experiment - if not set, inferred from task
+exp_name: ''
+
+# set random seed
+seed: 3407
+
+# number of environments
+num_envs: 128
+
+# set the maximum number of learning iterations to train for. overrides default per-environment setting
+max_iterations: ''
+
+# device config
+device: 'cuda:0'
+
+# visualization: viewer
+render: False
+
+# visualization: camera - if set, capture `capture_length` frames every `capture_interval` steps. 
+# `capture_envs` specifies the number of environments to capture videos from
+capture_video: True
+capture_interval: 1
+capture_length: ${task.env.episode_length}
+capture_envs: 1
+capture_local_obs: False
+
+# set the initial progress_buf to be random - reduce correlation between samples in the experience buffer
+random_time: False
+
+# set checkpoint path
+checkpoint: ''
+
+# ratio of samples to use for validation 
+val_ratio: 0.1
+
+# training directory - checkpoints are saved under {train_dir}/{exp_name}/nn/
+train_dir: 'runs_dagger'
+
+# initial states path - if not set, inferred from task
+init_states: ''
+
+# directory to save the initial states in
+init_state_dir: ''
+
+# eval_mode - if set, run policy in inference mode
+eval_mode: False
+
+# directory to save the rigid body poses in for rendering
+export_rigid_body_poses_dir: ""
+
+# wandb
+wandb_activate: True
+wandb_project: ${task_name}
+wandb_run_name: dagger
+
+# control gripper
+gripper_control: False
+
+# unidexgrasp / partnet
+object_code: ''
+object_scale: 0.06  # only applicable for unidexgrasp
+object_list: ''     # format: [[object_code,object_scale],...] for unidexgrasp, [object_code,...] for partnet
+
+# (initial states sampling) number of samples to collect
+num_samples: 10000
+
+defaults:
+  - task: 'pick_cube'
+  - dagger: ${task}
+  - train: ${task}
+  - override hydra/job_logging: disabled
+  - _self_
+
+# set the directory where the output files get saved
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+# override task.env.camera.width, task.env.camera.height
+local_obs: True
+global_obs: False
+enable_camera_latency: True       # visual obs will be delayed by 1 frame
+task:
+  env:
+    local_obs:
+      width: 84
+      height: 84
+      render_type:
+        depth: True
+        rgb: False
+        segmentation: ${.....dagger.use_seg_obs}
+      # The real FOV of realsense d405 is 58.
+      # In real world, we crop the 480 x 480 image to 368 x 368 and
+      # then interpolate the image to 84 x 84. This should yeild an FOV of 46 degrees.
+      # Random crop in robomimic will further crop the view to 76 x 76, which is 
+      # the ideal 42 degrees FOV. We set fov to 46 here and 42 in other config files.
+      horizontal_fov: 46    # real world: crop 640 x 480 to 332 x 332
+      camera_offset: [0.06, 0.0, 0.023]
+      camera_angle: 0.0
+      use_back_wrist_camera: False
+      clamp_depth: 0.3
+    global_obs:
+      width: 480
+      height: 480
+      horizontal_fov: 42
+      # locations: [[0.5, -0.5, 1.5], [0.5, 0.5, 1.5], [-0.5, -0.5, 1.5], [-0.5, 0.5, 1.5]]
+      locations: [[0.5, -0.5, 1.5], [0.5, 0.5, 1.5]]
+      render_type:
+        depth: True
+        rgb: False
+        segmentation: False
+
+# obs handler
+state_handler:
+  augmentation:
+    eef_trans_noise: 0.005
+    eef_rot_noise: 0.05
+depth_handler:
+  augmentation:
+    depth_warping:
+      enabled: True
+      prob: 0.8
+      std: 0.5
+    gaussian_blur:
+      enabled: False
+      kernel_size: 5
+      sigma_lower: 0.01
+      sigma_upper: 1.0
+    scale:
+      enabled: False
+      intensity: 0.05
+      prob: 0.4
+    holes:
+      enabled: True
+      prob: 0.5
+      kernel_size_lower: 3
+      kernel_size_upper: 27
+      sigma_lower: 1.0
+      sigma_upper: 7.0
+      thresh_lower: 0.6
+      thresh_upper: 0.9
+      fill_value: 1.0
+segmentation_handler:
+  augmentation:
+    zero_out:
+      enabled: False
+      prob: 0.4
+    random_erasing:
+      enabled: True
+      prob: 0.4
+      scale_min: 0.1
+      scale_max: 0.5
+    random_shift:
+      enabled: True
+      prob: 0.1
+      max_scale: 0.1
+
+pcd_handler:
+  downsample: 2048
+  filter_radius: 0.15
+  augmentation:
+    eef_trans_noise: 0.02
+    eef_rot_noise: 0.1
+    jitter_prob: 0.5
+    jitter_ratio: 0.1
+    jitter_std: 0.01
+    jitter_clip: 0.015
+
+# test options
+test_frequency: 10 # test every n x num_envs episodes
+test_episodes: 5
+
+# path to the sif file
+sif_path: '/projects/rsalakhugroup/containers/skills_planning.sif'
+
+# path to asset files (objects and codes in txt file)
+asset_file_path: "assets/unidexgrasp/trainset3363.txt"
+
+# set True for samplers
+sample_mode: False
+
+## Device config
+#  'physx' or 'flex'
+physics_engine: 'physx'
+# whether to use cpu or gpu pipeline
+pipeline: 'gpu'
+# device for running physics simulation
+sim_device: 'cuda:0'
+# device to run RL
+rl_device: 'cuda:0'
+graphics_device_id: 0
+
+## PhysX arguments
+num_threads: 4 # Number of worker threads per scene used by PhysX - for CPU PhysX only.
+solver_type: 1 # 0: pgs, 1: tgs
+num_subscenes: 4 # Splits the simulation into N physics scenes and runs each one in a separate thread
+
+# logging cfg
+logging:
+  suppress_timing: False
+
+# resume training
+resume: ''
+
+storage_devices: [0]

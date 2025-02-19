@@ -1,0 +1,116 @@
+defaults:
+    - IndustRealBase
+    - _self_
+
+name: 'place'
+use_init_states: True     
+headless: True            # open viewer with render=True instead
+physics_engine: "physx"
+
+env:
+  numEnvs: ${resolve_default:8192,${...num_envs}}
+  numObservations: 76
+  numActions: 6
+  episode_length: 120
+
+  val_ratio: ${resolve_default:0.0,${...val_ratio}}
+
+  # camera properties
+  camera:
+    width: 1440
+    height: 960
+
+  object_friction: 1.0
+
+  # unidexgrasp
+  object_code: ${...object_code}
+  object_scale: ${...object_scale}
+  object_list: ${...object_list}
+
+  # clutter and obstacles
+  enable_clutter_and_obstacle: True
+  num_clutter_objects: 5
+  clutter_object_radius: 0.05
+  clutter_dist_max: 0.40
+  num_obstacles: 2
+  obstacle_width: 0.40
+  obstacle_height: 0.30
+  obstacle_pos_noise: 0.10
+  obstacle_rot_noise: 0.25
+  obstacle_show_up_prob: 0.7
+  use_unidexgrasp_clutter: False        # if False, uses capsules; if True, use unidexgrasp objects; automatically set to True in multitask dagger
+  num_unidexgrasp_clutter_rest_poses: 16
+  unidexgrasp_file_list: assets/unidexgrasp/trainset3419.txt
+
+sampler:
+  # number of RL steps for pick policy
+  num_rl_steps: 90
+  # number of steps for closing gripper
+  num_close_gripper_steps: 40
+  # number of steps for lifting the arm
+  num_lift_up_steps: 30
+  # number of steps for randomizing franka and object pose
+  num_randomization_steps: 20
+
+  # for each pick result, we sample multiple randomized franka and object poses
+  num_randomization_per_policy: 15
+
+  # configuration for pick policy
+  # resolve the value of policy_init_states_path and policy_checkpoint_path programmatically
+  # too complicated to be resolved in the config file
+  policy_init_states_path: ""
+  policy_config_path: "config/train/pick.yaml"
+  policy_checkpoint_path: ""
+
+  # restriction for object position
+  object_pos_noise: 0.2
+  object_height_lower: 0.05
+  object_height_upper: 0.12
+
+  # filter initial states where the object drops
+  # we keep Franka rest for `num_filter_steps` steps for each initial state and check if the object is still grasped
+  num_filter_steps: 20
+
+rl:
+  # episode length
+  max_episode_length: ${..env.episode_length}
+
+  # actions
+  pos_action_scale: [0.05, 0.05, 0.05]
+  rot_action_scale: [0.05, 0.05, 0.05]
+  force_action_scale: [1.0, 1.0, 1.0]
+  torque_action_scale: [1.0, 1.0, 1.0]
+
+  clamp_rot: True
+  clamp_rot_thresh: 1.0e-6
+
+  # filter initial object poses where the grasp success rate is lower than the threshold
+  # for place env, this should only be applied in sample mode to match obs for pick policy
+  filter_pose_threshold: 0.01
+
+  # reward settings
+  target_xy_noise: 0.0     # manually set this to 0.15 in command during training
+  dist_object_keypoints_reward_temp: -15.0
+  dist_object_gripper_reward_temp: -3.0
+  eef_pose_consistency_reward_temp: -5.0
+  success_bonus: 15.0
+  success_threshold: 0.04
+
+  finger_contact_force_threshold: 1.0
+  finger_contact_reward_temp: 0.0
+
+  num_object_keypoints: 8
+  gripper_keypoint_scale: 0.5
+  gripper_keypoint_dof: 5
+  use_object_keypoint_6d: False
+  object_keypoint_6d_scale: 0.5
+
+randomize:
+  franka_arm_initial_dof_pos: [0, 0.1963, 0, -2.0, 0, 2.3416, 0.7854]
+  franka_gripper_initial_state: 0.0
+
+ctrl:
+  task_space_impedance:
+    motion_ctrl_axes: [1, 1, 1, 1, 1, 1]
+    task_prop_gains: [300, 300, 300, 50, 50, 50]
+    task_deriv_gains: [34, 34, 34, 1.4, 1.4, 1.4]

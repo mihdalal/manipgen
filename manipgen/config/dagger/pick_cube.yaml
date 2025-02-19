@@ -1,0 +1,12 @@
+dataset_path: datasets/pick_cube_depth
+batch_size: None  # defaults to value in student robomimic cfg
+lr: None  # defaults to value in student robomimic cfg
+deterministic_expert: True
+buffer_size: 1000
+num_learning_iterations: 2000
+num_learning_epochs: 5
+num_transitions_per_iter: 32
+student_cfg_path: config/dagger/robomimic/template.json
+visual_obs_type: depth  # 'depth' or 'pcd'
+use_seg_obs: False  # include segmantation mask of first frame in obs
+multitask: False

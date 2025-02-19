@@ -1,0 +1,69 @@
+defaults:
+    - IndustRealBase
+    - _self_
+    
+name: 'reach'
+use_init_states: False
+headless: True
+physics_engine: "physx"
+
+env:
+  numEnvs: ${resolve_default:8192,${...num_envs}}
+  numObservations: 27
+  numActions: 6
+  episode_length: 128
+
+  val_ratio: ${resolve_default:0.0,${...val_ratio}}
+
+  # camera properties
+  camera:
+    width: 1440
+    height: 960
+  
+  num_gripper_move_sim_steps: 90  # number of timesteps to reserve for moving gripper before first step of episode
+
+sampler:
+  # we don't need a sampler for reaching task
+
+rl:
+  pos_action_scale: [0.1, 0.1, 0.1]
+  rot_action_scale: [0.1, 0.1, 0.1]
+  force_action_scale: [1.0, 1.0, 1.0]
+  torque_action_scale: [1.0, 1.0, 1.0]
+
+  unidirectional_rot: True  # constrain Franka Z-rot to be unidirectional
+  unidirectional_force: False  # constrain Franka Z-force to be unidirectional (useful for debugging)
+
+  clamp_rot: True
+  clamp_rot_thresh: 1.0e-6
+
+  num_keypoints: 5  # number of keypoints used in reward
+  keypoint_scale: 0.5  # length of line of keypoints
+
+  max_episode_length: ${..env.episode_length}
+  use_keypoints_6D: True
+
+randomize:
+  franka_arm_initial_dof_pos: [0.0, 0.0, 0.0, -1.59695, 0.0, 2.5307, 0.0]  # initial joint angles after reset (halfway between joint limits)
+  franka_gripper_initial_state: 1.0
+
+  ctrl_workspace_bounds: [[0.3, 0.5], [-0.25, 0.25], [0.05, 0.35]]  # bounds within which to select target position for initial movement of gripper using closed-loop controller ([[x_min, x_max], [y_min, y_max], [z_min, z_max]])
+  fingertip_centered_rot_initial: [3.1416, 0.0, 0.0]  # target rotation (Euler) for initial movement of gripper
+  fingertip_centered_rot_noise: [0.4, 0.4, 0.4]  # hard
+
+  rl_workspace_bounds: [[0.3, 0.5], [-0.25, 0.25], [0.05, 0.35]]  # bounds within which to select target position for subsequent movement of gripper using RL policy ([[x_min, x_max], [y_min, y_max], [z_min, z_max]])
+  target_rot_initial: [3.1416, 0.0, 0.0]  # target rotation (Euler) for RL policy
+  target_rot_noise_level: [0.4, 0.4, 0.4]        # hard
+  # NOTE: For consistency with FrankaPy, the fingertip centered frame is located 9 mm above the very tip of the finger
+  # NOTE: the RL policy currently always targets the Z-down rotation
+
+ctrl:
+  task_space_impedance:
+    motion_ctrl_axes: [1, 1, 1, 1, 1, 1]
+    task_prop_gains: [1000, 1000, 1000, 50, 50, 50]
+    task_deriv_gains: [63.2, 63.2, 63.2, 1.41, 1.41, 1.41]
+
+debug:
+  verbose: False
+  log: False
+  visualize: False

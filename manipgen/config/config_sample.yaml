@@ -1,0 +1,131 @@
+# choose the task to be executed
+task_name: ${task.name}
+
+# set random seed
+seed: -1
+
+# number of environments
+num_envs: 8192
+
+# device config
+device: 'cuda:0'
+
+# visualization: viewer
+render: False
+
+# visualization: camera - if set, capture `capture_length` frames every `capture_interval` steps. 
+# `capture_envs` specifies the number of environments to capture videos from
+capture_video: False
+capture_interval: 3600
+capture_length: ${task.env.episode_length}
+capture_envs: 8
+
+# set the initial progress_buf to be random - reduce correlation between samples in the experience buffer
+random_time: False
+
+# ratio of samples to use for validation (not used here)
+val_ratio: 0.0
+
+# set checkpoint path
+checkpoint: ''
+
+# initial states path - if not set, inferred from task
+init_states: ''
+
+# directory to save the initial states in
+init_state_dir: ''
+
+# unidexgrasp / partnet
+object_code: ''
+object_scale: 0.06  # only applicable for unidexgrasp
+object_list: ''     # format: [[object_code,object_scale],...] for unidexgrasp, [object_code,...] for partnet
+
+# number of samples to collect
+num_samples: 10000
+
+# maximum number of iterations: if the number of samples collected is less than `num_samples`, 
+# the sampler will continue to collect samples until `max_iters` is reached.
+# This is useful when filtering is enabled.
+max_iters: 3
+
+# the samplers set different diversity of initial states for state-based and vision-based policies
+vision_based: True
+
+# filter initial states (e.g., for place cube, filter out states that will lead to cube falling off the gripper)
+filter: False
+
+# generate samples in easy mode (e.g., for place cube, pick up the cube and move above the target location by teleportation)
+easy_mode: False
+
+# filter initial states based on vision (e.g., for pick cube, filter out states where the cube is not visible.
+# The cube is invisible if the cube's mask takes up less than `filter_vision_threshold` of the pixels)
+filter_vision: False
+filter_vision_threshold: 0.02
+
+local_obs: False
+global_obs: False
+task:
+  env:
+    local_obs:
+      width: 84
+      height: 84
+      render_type:
+        depth: False
+        rgb: False
+        segmentation: True
+      horizontal_fov: 42 # real world: crop 640 x 480 to 332 x 332
+      camera_offset: [0.06, 0.0, 0.023]
+      camera_angle: 0.0
+      use_back_wrist_camera: False
+    global_obs:
+      width: 128
+      height: 128
+      locations: [[0.5, -0.5, 1.5], [0.5, 0.5, 1.5], [-0.5, -0.5, 1.5], [-0.5, 0.5, 1.5]]
+      render_type:
+        depth: True
+        rgb: False
+        segmentation: False
+
+  sim:
+    physx:
+      contact_collection: 2
+
+defaults:
+  - task: 'pick_cube'
+  - train: ${task}
+  - override hydra/job_logging: disabled
+  - _self_
+
+# set the directory where the output files get saved
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+# path to the sif file
+sif_path: '/projects/rsalakhugroup/containers/skills_planning.sif'
+
+# path to asset files (objects and codes in txt file)
+asset_file_path: "assets/unidexgrasp/trainset3363.txt"
+
+# set True for samplers
+sample_mode: True
+
+# control gripper
+gripper_control: True
+
+## Device config
+#  'physx' or 'flex'
+physics_engine: 'physx'
+# whether to use cpu or gpu pipeline
+pipeline: 'gpu'
+# device for running physics simulation
+sim_device: 'cuda:0'
+# device to run RL
+rl_device: 'cuda:0'
+graphics_device_id: 0
+
+## PhysX arguments
+num_threads: 4 # Number of worker threads per scene used by PhysX - for CPU PhysX only.
+solver_type: 1 # 0: pgs, 1: tgs
+num_subscenes: 4 # Splits the simulation into N physics scenes and runs each one in a separate thread

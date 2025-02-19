@@ -1,0 +1,22 @@
+calibrate_extrinsics:
+  camera:
+    image_width: 1920
+    image_height: 1080
+  tag:
+    type: tagStandard52h13
+    length: 0.050  # [meters]
+    active_pixel_ratio: 0.6  # For details, see https://github.com/AprilRobotics/apriltag/wiki/AprilTag-User-Guide
+  robot:
+    home_joint_angles: [0.02550676, -0.25173378, -0.3518326, -2.5239587, -0.11268669, 2.2990525, 0.5429185]
+    num_goals: 1024
+    goal_pos_bounds:
+      x: [0.4, 0.6]  # 0.35 can cause self-collision
+      y: [-0.15, 0.15]
+      z: [0.2, 0.45]
+    pos_to_point_at: [0.5069, 0.0, 0.0]
+  tag_detection:
+    num_detections: 16
+    display_images: True
+  output:
+    file_name: extrinsics_industreallib.json
+

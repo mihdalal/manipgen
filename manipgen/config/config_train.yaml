@@ -1,0 +1,120 @@
+# choose the task to be executed
+task_name: ${task.name}
+
+# name of the experiment - if not set, inferred from task
+exp_name: ''
+
+# set random seed
+seed: 3407
+
+# number of environments
+num_envs: 8192
+
+# set the maximum number of learning iterations to train for. overrides default per-environment setting
+max_iterations: ''
+
+# device config
+device: 'cuda:0'
+
+# visualization: viewer
+render: False
+
+# visualization: camera - if set, capture `capture_length` frames every `capture_interval` steps. 
+# `capture_envs` specifies the number of environments to capture videos from
+capture_video: False
+capture_interval: 1920 # 16 * episode_length
+capture_length: ${task.env.episode_length}
+capture_envs: 8
+
+# set the initial progress_buf to be random - reduce correlation between samples in the experience buffer
+random_time: False
+
+# set checkpoint path
+checkpoint: ''
+
+# ratio of samples to use for validation (not used here)
+val_ratio: 0.0
+
+# training directory - checkpoints are saved under {train_dir}/{exp_name}/nn/
+train_dir: 'runs'
+
+# initial states path - if not set, inferred from task
+init_states: ''
+
+# test - if set, run policy in inference mode
+test: False
+
+# wandb
+wandb_activate: False
+wandb_project: ${task_name}
+
+# unidexgrasp / partnet
+object_code: ''
+object_scale: 0.06  # only applicable for unidexgrasp
+object_list: ''     # format: [[object_code,object_scale],...] for unidexgrasp, [object_code,...] for partnet
+
+# (initial states sampling) number of samples to collect
+num_samples: 10000
+
+defaults:
+  - task: 'pick_cube'
+  - train: ${task}
+  - override hydra/job_logging: disabled
+  - _self_
+
+# set the directory where the output files get saved
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+# some of the visualization scripts also load this config file
+# keep the following keys in the config file for convenience
+local_obs: False
+global_obs: False
+task:
+  env:
+    local_obs:
+      width: 84
+      height: 84
+      render_type:
+        depth: True
+        rgb: False
+        segmentation: False
+      horizontal_fov: 42 # real world: crop 640 x 480 to 332 x 332
+      camera_offset: [0.06, 0.0, 0.023]
+      camera_angle: 0.0
+      use_back_wrist_camera: False
+    global_obs:
+      width: 128
+      height: 128
+      locations: [[0.5, -0.5, 1.5], [0.5, 0.5, 1.5], [-0.5, -0.5, 1.5], [-0.5, 0.5, 1.5]]
+      render_type:
+        depth: True
+        rgb: False
+        segmentation: False
+
+# set True for samplers
+sample_mode: False
+
+# only True when sampling grasp poses
+sample_grasp_pose: False
+
+# control gripper
+gripper_control: True
+
+## Device config
+#  'physx' or 'flex'
+physics_engine: 'physx'
+# whether to use cpu or gpu pipeline
+pipeline: 'gpu'
+# device for running physics simulation
+sim_device: 'cuda:0'
+# device to run RL
+rl_device: 'cuda:0'
+graphics_device_id: 0
+
+## PhysX arguments
+num_threads: 4 # Number of worker threads per scene used by PhysX - for CPU PhysX only.
+solver_type: 1 # 0: pgs, 1: tgs
+num_subscenes: 4 # Splits the simulation into N physics scenes and runs each one in a separate thread

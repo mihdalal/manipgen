@@ -1,0 +1,69 @@
+{
+    "train": {
+        "num_data_workers": 0,
+        "hdf5_cache_mode": null,
+        "hdf5_use_swmr": true,
+        "hdf5_load_next_obs": false,
+        "hdf5_normalize_obs": false,
+        "hdf5_filter_key": null,
+        "hdf5_validation_filter_key": null,
+        "dataset_keys": [
+            "actions"
+        ],
+        "goal_mode": null
+    },
+    "observation": {
+        "modalities": {
+            "obs": {
+                "low_dim": [
+                    "state"
+                ],
+                "rgb": [],
+                "depth": [
+                    "visual"
+                ]
+            }
+        },
+        "encoder": {
+            "low_dim": {
+                "core_class": null,
+                "core_kwargs": {},
+                "obs_randomizer_class": null,
+                "obs_randomizer_kwargs": {}
+            },
+            "rgb": {
+                "core_class": "VisualCore",
+                "core_kwargs": {},
+                "obs_randomizer_class": null,
+                "obs_randomizer_kwargs": {}
+            },
+            "depth": {
+                "core_class": "VisualCore",
+                "core_kwargs": {
+                    "feature_dimension": 64,
+                    "flatten": true,
+                    "backbone_class": "ResNet18Conv",
+                    "backbone_kwargs": {
+                        "pretrained": false,
+                        "input_coord_conv": false
+                    },
+                    "pool_class": "SpatialSoftmax",
+                    "pool_kwargs": {
+                        "num_kp": 32,
+                        "learnable_temperature": false,
+                        "temperature": 1.0,
+                        "noise_std": 0.0,
+                        "output_variance": false
+                    }
+                },
+                "obs_randomizer_class": "CropRandomizer",
+                "obs_randomizer_kwargs": {
+                    "crop_height": 76,
+                    "crop_width": 76,
+                    "num_crops": 1,
+                    "pos_enc": false
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,80 @@
+defaults:
+    - IndustRealBase
+    - _self_
+
+name: 'pick_cube'
+use_init_states: True     
+headless: True            # open viewer with render=True instead
+physics_engine: "physx"
+
+env:
+  numEnvs: ${resolve_default:8192,${...num_envs}}
+  numObservations: 22
+  numActions: 6
+  episode_length: 120
+
+  val_ratio: ${resolve_default:0.0,${...val_ratio}}
+
+  # camera properties
+  camera:
+    width: 1440
+    height: 960
+
+  object_friction: 1.0
+  cube_size: 0.0385
+
+sampler:
+  # inverse kinematics coefficient
+  damping: 0.10
+
+  # threshold for accepting IK results
+  ik_solver_pos_tolerance: 0.05
+  ik_solver_rot_tolerance: 0.04
+
+  # max number of IK iterations
+  max_ik_iters: 15
+
+  # max number of backtrack iterations
+  max_backtrack_iters: 20
+
+  # noise for sampling object position: 
+  # for x and y axis, uniformly sample from [center-object_pos_noise, center+object_pos_noise]
+  object_pos_noise: 0.2
+
+  # noise for sampling eef position: 
+  # eef position is sampled from a half-sphere with radius target_eef_radius centered at target object position
+  target_eef_radius: 0.08
+
+  # minimum distance to table of target eef position
+  target_eef_z_offset: 0.01
+
+rl:
+  pos_action_scale: [0.05, 0.05, 0.05]
+  rot_action_scale: [0.05, 0.05, 0.05]
+  force_action_scale: [1.0, 1.0, 1.0]
+  torque_action_scale: [1.0, 1.0, 1.0]
+
+  clamp_rot: True
+  clamp_rot_thresh: 1.0e-6
+
+  max_episode_length: ${..env.episode_length}
+
+  dist_gripper_reward_temp: -1.0
+  dist_xy_reward_temp: -3.0
+  
+  gripper_keypoint_scale: 0.5
+  success_bonus: 0.0
+
+  enable_object_in_view_reward: False
+  object_in_view_reward_temp: -0.8
+  object_in_view_reward_threshold: 0.27
+
+randomize:
+  franka_arm_initial_dof_pos: [0, 0.1963, 0, -2.0, 0, 2.3416, 0.7854]
+  franka_gripper_initial_state: 1.0
+
+ctrl:
+  task_space_impedance:
+    motion_ctrl_axes: [1, 1, 1, 1, 1, 1]
+    task_prop_gains: [300, 300, 300, 50, 50, 50]
+    task_deriv_gains: [34, 34, 34, 1.4, 1.4, 1.4]

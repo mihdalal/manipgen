@@ -1,0 +1,25 @@
+defaults:
+  - base
+  - _self_
+
+policy_config:
+  dagger:
+    use_seg_obs: True
+
+task_instance_config:
+  motion:
+    duration: 5.0
+
+  control:
+    prop_gains: [1000, 1000, 1000, 50, 50, 50]
+    # NOTE: deriv_gains computed automatically as 2 * sqrt(prop_gains)
+    mode:
+      type: leaky_plai  # options: nominal, plai, leaky_plai
+      nominal:
+        action_scale: null
+      plai:
+        action_scale: [0.0005, 0.0005, 0.0005, 0.001, 0.001, 0.001]
+      leaky_plai:
+        action_scale: [0.002, 0.002, 0.002, 0.05, 0.05, 0.05]
+        pos_err_thresh: [0.02, 0.02, 0.02]
+        rot_err_thresh: 4.0     # degrees
