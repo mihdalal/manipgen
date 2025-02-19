@@ -11,7 +11,7 @@ ManipGen is a generalist agent for long-horizon robotic manipulation. It leverag
 **Authors**: [Murtaza Dalal*](https://mihdalal.github.io/), [Min Liu*](https://damianliumin.github.io/), [Walter Talbott](https://www.linkedin.com/in/walter-talbott-678b8aa8/), [Chen Chen](https://www.linkedin.com/in/chen90/), [Deepak Pathak](https://www.cs.cmu.edu/~dpathak/), [Jian Zhang](https://www.linkedin.com/in/jianzhangpurdue/), [Ruslan Salakhutdinov](https://www.cs.cmu.edu/~rsalakhu/)  
 **Website**: [https://mihdalal.github.io/manipgen/](https://mihdalal.github.io/manipgen/)  
 **Paper**: [https://mihdalal.github.io/manipgen/resources/paper.pdf](https://mihdalal.github.io/manipgen/resources/paper.pdf)  
-**Video** [https://www.youtube.com/watch?v=vN7lw7GLc4A](https://www.youtube.com/watch?v=vN7lw7GLc4A)
+**Video**: [https://www.youtube.com/watch?v=vN7lw7GLc4A](https://www.youtube.com/watch?v=vN7lw7GLc4A)  
 **Models**: [https://huggingface.co/minliu01/ManipGen](https://huggingface.co/minliu01/ManipGen)  
 
 
