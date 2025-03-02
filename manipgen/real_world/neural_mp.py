@@ -10,8 +10,8 @@ import torch
 import urchin
 from robofin.pointcloud.torch import FrankaSampler
 from robofin.robots import FrankaRobot
-import manipgen_robomimic.utils.file_utils as FileUtils
-import manipgen_robomimic.utils.torch_utils as TorchUtils
+import robomimic.utils.file_utils as FileUtils
+import robomimic.utils.torch_utils as TorchUtils
 
 import rospy
 from manipgen.real_world.utils.geometry import TorchCuboids, TorchCylinders, TorchSpheres, vectorized_subsample
