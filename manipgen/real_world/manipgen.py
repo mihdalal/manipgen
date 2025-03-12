@@ -99,7 +99,6 @@ class ManipGen:
                 if skill_completed:
                     break
 
-            self.update_execution_log(skill, obj)
 
         # print time logs
         if debug:
