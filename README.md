@@ -198,6 +198,7 @@ We provide example scripts for the pick skill below. You can modify them to trai
 # Train DAgger policy
 python dagger.py task=pick exp_name=franka_pick_dagger \
     wandb_run_name=franka_pick_dagger_run \
+    object_code=core/bottle-c13219fac28e722edd6a2f6a8ecad52d object_scale=0.10 \
     checkpoint=runs/pick_demo/franka_pick_core-bottle-c13219fac28e722edd6a2f6a8ecad52d_010/nn/franka_pick.pth \
     init_states=init_states/franka_pick_core-bottle-c13219fac28e722edd6a2f6a8ecad52d_010_init_states.pt \
     num_envs=32 wandb_activate=True wandb_project=pick capture_video=True \
