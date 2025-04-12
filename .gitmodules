@@ -18,10 +18,6 @@
 [submodule "pointnet2_ops"]
 	path = pointnet2_ops
 	url = git@github.com:upriyam-cmu/pointnet2_ops.git
-[submodule "robomimic"]
-	path = robomimic
-	url = https://github.com/mihdalal/robomimic
-	branch = neural_mp_manipgen
 [submodule "tracikpy"]
 	path = tracikpy
 	url = git@github.com:mjd3/tracikpy.git
@@ -29,11 +25,15 @@
 	path = manipgen_robomimic
 	url = https://github.com/mihdalal/robomimic
 	branch = manipgen_robomimic
-[submodule "frankapy"]
-	path = frankapy
-	url = https://github.com/mihdalal/frankapy.git
-	branch = manipgen
 [submodule "robofin"]
 	path = robofin
 	url = https://github.com/mihdalal/robofin
 	branch = manipgen
+[submodule "frankapy"]
+	path = frankapy
+	url = https://github.com/mihdalal/frankapy.git
+	branch = skills_planning
+[submodule "robomimic"]
+	path = robomimic
+	url = https://github.com/mihdalal/robomimic
+	branch = neural_mp_manipgen
