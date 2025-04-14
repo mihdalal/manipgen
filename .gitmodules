@@ -35,5 +35,5 @@
 	branch = skills_planning
 [submodule "robomimic"]
 	path = robomimic
-	url = https://github.com/mihdalal/robomimic
-	branch = neural_mp_manipgen
+	url = git@github.com:mihdalal/robomimic.git
+	branch = neural_mp_skills_planning
